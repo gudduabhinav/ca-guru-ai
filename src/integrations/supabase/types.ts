@@ -87,6 +87,66 @@ export type Database = {
           },
         ]
       }
+      flashcard_reviews: {
+        Row: {
+          ease: number
+          flashcard_id: string
+          id: string
+          interval_days: number
+          last_reviewed: string | null
+          next_review: string
+          reviews_count: number
+          user_id: string
+        }
+        Insert: {
+          ease?: number
+          flashcard_id: string
+          id?: string
+          interval_days?: number
+          last_reviewed?: string | null
+          next_review?: string
+          reviews_count?: number
+          user_id: string
+        }
+        Update: {
+          ease?: number
+          flashcard_id?: string
+          id?: string
+          interval_days?: number
+          last_reviewed?: string | null
+          next_review?: string
+          reviews_count?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
+      flashcards: {
+        Row: {
+          back: string
+          created_at: string
+          created_by: string | null
+          front: string
+          id: string
+          subject_id: string | null
+        }
+        Insert: {
+          back: string
+          created_at?: string
+          created_by?: string | null
+          front: string
+          id?: string
+          subject_id?: string | null
+        }
+        Update: {
+          back?: string
+          created_at?: string
+          created_by?: string | null
+          front?: string
+          id?: string
+          subject_id?: string | null
+        }
+        Relationships: []
+      }
       formula_sheets: {
         Row: {
           content: string
@@ -295,6 +355,60 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      question_bookmarks: {
+        Row: {
+          created_at: string
+          difficulty_mark: string | null
+          id: string
+          question_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          difficulty_mark?: string | null
+          id?: string
+          question_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          difficulty_mark?: string | null
+          id?: string
+          question_id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      study_plans: {
+        Row: {
+          created_at: string
+          daily_hours: number
+          exam_date: string
+          id: string
+          level: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          daily_hours?: number
+          exam_date: string
+          id?: string
+          level?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          daily_hours?: number
+          exam_date?: string
+          id?: string
+          level?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       subjects: {
         Row: {
