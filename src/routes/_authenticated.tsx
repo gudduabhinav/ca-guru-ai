@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useNavigate, useLocation } from "@tansta
 import { useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, LayoutDashboard, MessageSquare, BookOpen, Upload, LogOut, FileQuestion } from "lucide-react";
+import { GraduationCap, LayoutDashboard, MessageSquare, BookOpen, Upload, LogOut, FileQuestion, CalendarDays, Layers, BarChart3, Zap } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated")({ component: Layout });
 
@@ -24,6 +24,10 @@ function Layout() {
     { to: "/doubts", icon: MessageSquare, label: "Ask Doubts" },
     { to: "/syllabus", icon: BookOpen, label: "Syllabus" },
     { to: "/past-questions", icon: FileQuestion, label: "Past Questions" },
+    { to: "/planner", icon: CalendarDays, label: "Study Planner" },
+    { to: "/flashcards", icon: Layers, label: "Flashcards" },
+    { to: "/analytics", icon: BarChart3, label: "Analytics" },
+    { to: "/revision", icon: Zap, label: "Revision Mode" },
     ...(isTeacher ? [{ to: "/teacher", icon: Upload, label: "Knowledge" }] : []),
   ] as const;
 

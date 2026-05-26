@@ -17,17 +17,38 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { generateDetailedAnswer, addPastQuestion } from "@/lib/past-questions.functions";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
-import { FileQuestion, Sparkles, RefreshCw, Plus, Calendar, BookMarked, CheckCircle2 } from "lucide-react";
+import { FileQuestion, Sparkles, RefreshCw, Plus, Calendar, BookMarked, CheckCircle2, Bookmark, BookmarkCheck } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/past-questions")({ component: PastQuestionsPage });
 
 type AnswerResult = { answer: string; citations: any[] };
 
 function PastQuestionsPage() {
-  const { isTeacher } = useAuth();
+  const { user, isTeacher } = useAuth();
   const qc = useQueryClient();
   const genFn = useServerFn(generateDetailedAnswer);
   const addFn = useServerFn(addPastQuestion);
+
+  const { data: bookmarkSet } = useQuery({
+    queryKey: ["question_bookmarks", user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data } = await supabase.from("question_bookmarks").select("question_id").eq("user_id", user!.id);
+      return new Set((data ?? []).map((r) => r.question_id as string));
+    },
+  });
+
+  async function toggleBookmark(qid: string) {
+    if (!user) return;
+    if (bookmarkSet?.has(qid)) {
+      await supabase.from("question_bookmarks").delete().eq("user_id", user.id).eq("question_id", qid);
+      toast.success("Bookmark removed");
+    } else {
+      await supabase.from("question_bookmarks").insert({ user_id: user.id, question_id: qid });
+      toast.success("Bookmarked for revision");
+    }
+    qc.invalidateQueries({ queryKey: ["question_bookmarks"] });
+  }
 
   const [level, setLevel] = useState<string>("all");
   const [subjectId, setSubjectId] = useState<string>("all");
@@ -246,9 +267,16 @@ function PastQuestionsPage() {
 
                 <div className="flex items-center justify-between">
                   <h3 className="font-display text-xl">Detailed model answer</h3>
-                  <Button size="sm" variant="outline" onClick={regenerate} disabled={answerQuery.isFetching}>
-                    <RefreshCw className={`mr-1 size-3 ${answerQuery.isFetching ? "animate-spin" : ""}`} />Regenerate
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => toggleBookmark(active.id)}>
+                      {bookmarkSet?.has(active.id)
+                        ? <><BookmarkCheck className="mr-1 size-3 text-[var(--gold)]" />Bookmarked</>
+                        : <><Bookmark className="mr-1 size-3" />Bookmark</>}
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={regenerate} disabled={answerQuery.isFetching}>
+                      <RefreshCw className={`mr-1 size-3 ${answerQuery.isFetching ? "animate-spin" : ""}`} />Regenerate
+                    </Button>
+                  </div>
                 </div>
 
                 {answerQuery.isLoading && <div className="text-sm text-muted-foreground">Loading saved answer / generating…</div>}
